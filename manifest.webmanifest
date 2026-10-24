@@ -1,0 +1,16 @@
+{
+  "name": "Stupid Simulator 2 Dialogue Editor",
+  "short_name": "SS2 Dialogue",
+  "description": "Readable, editable dialogue JSON for Stupid Simulator 2.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2a1457",
+  "theme_color": "#2a1457",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

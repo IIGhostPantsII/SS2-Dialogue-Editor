@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SS2 Dialogue Editor</title>
+<meta name="theme-color" content="#2a1457">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SS2 Dialogue">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand">SS2 Dialogue</span>
+    <span class="topbar-title" id="topbar-title">Import JSON</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== TAB 1: IMPORT ===================== -->
+  <section id="tab-import" class="tab">
+    <div class="info" id="install-tip" hidden>
+      <div><strong>Install me:</strong> in Safari tap Share, then <em>Add to Home Screen</em>. Use the installed icon from then on (see the note in the Vault tab about storage).</div>
+      <button type="button" class="btn small" id="install-dismiss">Got it</button>
+    </div>
+
+    <label class="lbl" for="paste">Paste dialogue JSON</label>
+    <textarea id="paste" class="mono" rows="14" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" placeholder='[ { "index": 0, "speakerName": "Nile", ... } ]'></textarea>
+
+    <div class="btnrow wrap">
+      <button type="button" class="btn" id="btn-paste">Paste from clipboard</button>
+      <button type="button" class="btn" id="btn-sample">Try sample</button>
+      <button type="button" class="btn" id="btn-clear">Clear</button>
+    </div>
+
+    <label class="field">
+      <span class="lbl">Title (optional, for the Vault only)</span>
+      <input type="text" id="imp-title" placeholder="e.g. Time machine intro" autocomplete="off">
+    </label>
+
+    <div id="import-error" class="errorbox" hidden></div>
+
+    <button type="button" class="btn primary big" id="btn-load">Load into editor</button>
+
+    <p class="muted small">Code fences (```json) and extra text around the JSON are stripped automatically. A single line object works too. Your pasted text is never cleared unless you press Clear.</p>
+  </section>
+
+  <!-- ===================== TAB 2: EDITOR ===================== -->
+  <section id="tab-editor" class="tab">
+    <label class="field first">
+      <span class="lbl">Dialogue title (Vault only, not in the exported JSON)</span>
+      <input type="text" id="title" autocomplete="off" placeholder="Untitled dialogue">
+    </label>
+
+    <div class="actionbar">
+      <div class="status" id="status"></div>
+      <div class="btnrow">
+        <button type="button" class="btn" id="btn-save">Save to Vault</button>
+        <button type="button" class="btn primary" id="btn-export">Export</button>
+      </div>
+    </div>
+
+    <input type="search" id="search" placeholder="Search speaker or text…" autocomplete="off" autocapitalize="off" spellcheck="false">
+
+    <div id="banner"></div>
+    <div id="list"></div>
+
+    <div class="btnrow wrap addbar">
+      <button type="button" class="btn" id="btn-add-line">+ Add line</button>
+      <button type="button" class="btn" id="btn-add-event">+ Add event beat</button>
+    </div>
+  </section>
+
+  <!-- ===================== TAB 3: VAULT ===================== -->
+  <section id="tab-vault" class="tab">
+    <input type="search" id="vault-search" placeholder="Search titles…" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="btnrow wrap vtools">
+      <button type="button" class="btn" id="btn-new">New dialogue</button>
+      <button type="button" class="btn" id="btn-export-all">Export all</button>
+      <button type="button" class="btn" id="btn-import-backup">Import backup</button>
+      <input type="file" id="file-backup" accept=".json,application/json" hidden>
+    </div>
+    <div id="vault-list"></div>
+    <div class="info" id="vault-info"></div>
+  </section>
+
+</main>
+
+<nav class="tabbar" aria-label="Main">
+  <button type="button" data-tab="import" aria-selected="true">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3h16v-3"/></svg>
+    <span>Import</span>
+  </button>
+  <button type="button" data-tab="editor" aria-selected="false">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM13 7l4 4"/></svg>
+    <span>Editor</span>
+  </button>
+  <button type="button" data-tab="vault" aria-selected="false">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v4H3zM5 11v9h14v-9M10 15h4"/></svg>
+    <span>Vault</span>
+  </button>
+</nav>
+
+<div id="sheet" class="sheet hidden"><div class="sheet-panel" id="sheet-panel"></div></div>
+<div id="update-bar" class="updatebar" hidden><span>Update ready.</span><button type="button" class="btn small primary" id="btn-reload">Reload</button></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<noscript>This app needs JavaScript turned on.</noscript>
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
