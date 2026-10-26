@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const C = window.Core;
-  const APP_VERSION = '2.0';
+  const APP_VERSION = '2.1';
 
   const KEYS = {
     draft: 'ss2.draft', vault: 'ss2.vault', vaultV1: 'ss2.vault.v1backup', schema: 'ss2.schema',
@@ -775,7 +775,8 @@
       h('button', { type: 'button', class: 'btn', text: 'Duplicate', onclick: () => duplicateLine(l) }),
       h('button', { type: 'button', class: 'btn', text: '+ Line below', onclick: () => insertAfter(l, C.newLine(l.speakerName, l.metBefore), true) }),
       h('button', { type: 'button', class: 'btn', text: '+ Event beat below', onclick: () => eventMenu(l) }),
-      h('button', { type: 'button', class: 'btn danger', text: 'Delete', onclick: () => deleteLine(l) })));
+      h('button', { type: 'button', class: 'btn danger', text: 'Delete', onclick: () => deleteLine(l) }),
+      h('button', { type: 'button', class: 'btn wide', text: '✂ Split here (this line + everything below → new dialogue)', disabled: i0 === 0 ? true : null, onclick: () => splitAt(l) })));
 
     e.after = () => {
       vis.forEach(([el, fn]) => { el.hidden = !fn(); });
@@ -827,6 +828,36 @@
     state.lines.splice(idx(l), 1);
     if (state.open === l) state.open = null;
     renumber(); touch(); renderEditor();
+  }
+
+  /* Split: this line and everything below it become a NEW Vault dialogue; the lines above stay here (and are saved to the Vault). */
+  async function splitAt(l) {
+    const i = idx(l);
+    if (i <= 0) { toast('Pick a line after the first one to split there.'); return; }
+    const kept = state.lines.slice(0, i), moved = state.lines.slice(i);
+    const base = (state.title || '').trim() || 'Untitled dialogue';
+    const name = await ask({
+      title: 'Split at line #' + i, okLabel: 'Split', input: base + ' (part 2)',
+      message: 'Lines #' + i + '–#' + (state.lines.length - 1) + ' (' + moved.length + ') move to a new dialogue in the Vault. Lines #0–#' + (i - 1) + ' (' + kept.length + ') stay here and are saved to the Vault. Name for the new dialogue:'
+    });
+    if (name === null) return;
+    const newTitle = name.trim() || base + ' (part 2)';
+    const vault = getVault();
+    const now = Date.now();
+    let entry = state.vaultId ? vault.find((d) => d.id === state.vaultId) : null;
+    if (entry) { entry.title = base; entry.lines = C.toStorageArray(kept); entry.format = state.format; entry.updated = now; }
+    else {
+      entry = { id: C.uid(), title: base, format: state.format, lines: C.toStorageArray(kept), created: now, updated: now };
+      vault.push(entry);
+    }
+    vault.push({ id: C.uid(), title: newTitle, format: state.format, lines: C.toStorageArray(moved), created: now, updated: now + 1 });
+    // write both halves in one go; if that fails nothing in the editor has changed yet
+    if (!store.set(KEYS.vault, vault)) { toast('Could not split: the Vault could not be saved (storage full or blocked). Nothing was changed.'); return; }
+    state.vaultId = entry.id; state.title = base; $('#title').value = base;
+    state.lines = kept; state.open = null; state.filter = ''; $('#search').value = '';
+    state.dirty = false;
+    renumber(); saveDraft(); renderEditor();
+    toast('Split: ' + kept.length + ' lines kept, ' + moved.length + ' moved to "' + newTitle + '" in the Vault');
   }
 
   function addToEnd(nl) {

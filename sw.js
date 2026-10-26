@@ -1,6 +1,6 @@
 /* Service worker: caches the app shell so everything works offline.
-   If you ever change the app files, bump CACHE (v2 -> v3) so phones pick up the new version. */
-const CACHE = 'ss2-dialogue-editor-v2';
+   If you ever change the app files, bump CACHE (v3 -> v4) so phones pick up the new version. */
+const CACHE = 'ss2-dialogue-editor-v3';
 const ASSETS = [
   './', './index.html', './styles.css', './core.js', './app.js', './manifest.webmanifest',
   './icon-180.png', './icon-192.png', './icon-512.png', './icon-maskable-512.png'
